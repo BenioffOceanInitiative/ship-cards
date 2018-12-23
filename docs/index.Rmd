@@ -52,13 +52,13 @@ Row
 ### Overall
     
 ```{r}
-ship_box(pct_dist_ok)
+show_ship_box(pct_dist_ok)
 ```
 
 ### Overall distance within speed limit
 
 ```{r}
-ship_gauge(pct_dist_ok)
+show_ship_gauge(pct_dist_ok)
 ```
     
 Row

@@ -20,4 +20,5 @@ make_card <- function(ship){
 }
 
 # make_card("NAUTILUS")
-ships$name %>% walk(make_card)
+# make_card("PACIFIC KINDNESS")
+ships$name[11] %>% walk(make_card)

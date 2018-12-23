@@ -20,9 +20,9 @@ library(shipr)
 
 ship_name = params$ship_name
 
-segs <- ship_segments(sbais, ship_name, dir_data="data")
+segs <- get_ship_segments(sbais, ship_name, dir_data="data")
 
-lims <- ship_limits(segs, limit_knots = 10, ship_name, dir_data="data")
+lims <- get_ship_limits(segs, limit_knots = 10, ship_name, dir_data="data")
 
 pct_dist_ok <- lims %>%
   filter(label == "<= 10 knots") %>%
@@ -35,13 +35,13 @@ Row
 ### `r ship_name`
     
 ```{r}
-ship_box(pct_dist_ok)
+show_ship_box(pct_dist_ok)
 ```
 
 ### Distance within speed limit
 
 ```{r}
-ship_gauge(pct_dist_ok)
+show_ship_gauge(pct_dist_ok)
 ```
     
 Row {.tabset .tabset-fade}
