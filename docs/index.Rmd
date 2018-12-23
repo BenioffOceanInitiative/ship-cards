@@ -1,0 +1,76 @@
+---
+title: "Ship Report Cards"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    self_contained: false
+    lib_dir: "ship/libs"
+---
+
+```{r}
+library(tidyverse)
+library(here)
+library(glue)
+library(sf)
+library(DT)
+#library(shipr)
+# devtools::install_github("mvisalli/shipr")
+# devtools::install_local("../shipr", force=T)
+# devtools::document("../../shipr")
+devtools::load_all("../../shipr")
+
+ships <- tibble(
+  geojson  = list.files(here("data/ship"), ".*_limits.geojson", full.names = T),
+  ship     = str_replace(basename(geojson), "(.*)_limits.geojson", "\\1"),
+  data     = map(geojson, read_sf)) %>% 
+  mutate(
+    summary  = map(data, function(x){
+      x %>%
+        st_set_geometry(NULL) %>% 
+        summarize(
+          time_min    = sum(min),
+          dist_km     = sum(km),
+          dist_km_ok  = last(km),
+          pct_dist_ok = last(pct_dist)/100,
+          pct_time_ok = last(pct_time)/100)})) %>% 
+  unnest(summary) %>% 
+  mutate(
+    ship = glue("<a href='./ship/{ship}.html'>{ship}</a>")) %>% 
+  select(ship, pct_dist_ok, dist_km, dist_km_ok, time_min, pct_time_ok) %>% 
+  arrange(desc(pct_dist_ok))
+
+pct_dist_ok <- ships %>% 
+  summarize(
+    pct_dist_ok = sum(dist_km_ok) / sum(dist_km) * 100) %>% 
+  pull(pct_dist_ok)
+```
+
+
+Row
+-------------------------------------
+
+### Overall
+    
+```{r}
+ship_box(pct_dist_ok)
+```
+
+### Distance within speed limit
+
+```{r}
+ship_gauge(pct_dist_ok)
+```
+    
+Row
+-------------------------------------
+
+### Directory of Ships
+
+```{r}
+ships %>% 
+  select(-dist_km_ok) %>% 
+  datatable(ships, escape = 1) %>% 
+  formatCurrency(c('dist_km', 'time_min'), currency="", digits=1) %>% 
+  formatPercentage(c('pct_dist_ok', 'pct_time_ok'), digits=1)
+```
+

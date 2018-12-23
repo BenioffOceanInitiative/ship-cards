@@ -1,0 +1,62 @@
+---
+title: "Ship Report Card"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    self_contained: false
+    lib_dir: "docs/ship/libs"
+params:
+  ship_name: "NAUTILUS"
+---
+
+```{r}
+library(tidyverse)
+library(flexdashboard)
+library(shipr)
+# devtools::document("../shipr")
+# devtools::load_all("../shipr")
+# devtools::install_github("mvisalli/shipr")
+# devtools::install_local("../shipr", force=T)
+
+ship_name = params$ship_name
+
+segs <- ship_segments(sbais, ship_name, dir_data="data")
+
+lims <- ship_limits(segs, limit_knots = 10, ship_name, dir_data="data")
+
+pct_dist_ok <- lims %>%
+  filter(label == "<= 10 knots") %>%
+  pull(pct_dist)
+```
+
+    
+Row
+-------------------------------------
+
+### `r ship_name`
+    
+```{r}
+ship_box(pct_dist_ok)
+```
+
+### Distance within speed limit
+
+```{r}
+ship_gauge(pct_dist_ok)
+```
+    
+Row {.tabset .tabset-fade}
+-------------------------------------
+
+### Map of Limits
+    
+```{r}
+map_ship_limits(lims)
+```
+
+
+### Map of Speeds
+    
+```{r}
+map_ship_segments(segs)
+```
