@@ -1,22 +1,22 @@
 ---
-title: "Ship Report Card"
+title: "Ship Report Card: `r params$ship_name`"
 output: 
   flexdashboard::flex_dashboard:
     orientation: rows
     self_contained: false
     lib_dir: "docs/ship/libs"
+    navbar:
+    - { title: "Directory", icon: "fa-ship", href: "../", align: left }    
 params:
-  ship_name: "NAUTILUS"
+  ship_name: "ELDORADO"
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r}
 library(tidyverse)
 library(flexdashboard)
 library(shipr)
-# devtools::document("../shipr")
-# devtools::load_all("../shipr")
-# devtools::install_github("mvisalli/shipr")
-# devtools::install_local("../shipr", force=T)
 
 ship_name = params$ship_name
 
@@ -28,7 +28,6 @@ pct_dist_ok <- lims %>%
   filter(label == "<= 10 knots") %>%
   pull(pct_dist)
 ```
-
     
 Row
 -------------------------------------

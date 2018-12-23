@@ -13,16 +13,16 @@ library(here)
 library(glue)
 library(sf)
 library(DT)
-#library(shipr)
+library(shipr)
 # devtools::install_github("mvisalli/shipr")
-# devtools::install_local("../shipr", force=T)
+# devtools::install_local("../../shipr", force=T)
 # devtools::document("../../shipr")
-devtools::load_all("../../shipr")
+# devtools::load_all("../../shipr")
 
 ships <- tibble(
-  geojson  = list.files(here("data/ship"), ".*_limits.geojson", full.names = T),
-  ship     = str_replace(basename(geojson), "(.*)_limits.geojson", "\\1"),
-  data     = map(geojson, read_sf)) %>% 
+  rds  = list.files(here("data/ship"), ".*_limits.rds", full.names = T),
+  ship     = str_replace(basename(rds), "(.*)_limits.rds", "\\1"),
+  data     = map(rds, read_rds)) %>% 
   mutate(
     summary  = map(data, function(x){
       x %>%
@@ -55,7 +55,7 @@ Row
 ship_box(pct_dist_ok)
 ```
 
-### Distance within speed limit
+### Overall distance within speed limit
 
 ```{r}
 ship_gauge(pct_dist_ok)
